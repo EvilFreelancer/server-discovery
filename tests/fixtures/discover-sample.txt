@@ -1,0 +1,57 @@
+### hostname
+node1
+### fqdn
+node1.lan
+### user
+ops
+### uid
+1000
+### groups
+ops sudo docker
+### os_release
+PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+### openwrt_release
+### synoinfo
+### kernel
+6.12.101+deb13-amd64
+### arch
+x86_64
+### lscpu
+Architecture:             x86_64
+CPU(s):                   32
+Model name:               AMD Ryzen 9 7950X 16-Core Processor
+Thread(s) per core:       2
+Core(s) per socket:       16
+### cpuinfo
+model name	: AMD Ryzen 9 7950X 16-Core Processor
+nproc=32
+### meminfo
+MemTotal:       131072000 kB
+### lsblk
+NAME="sda" SIZE="3.6T" TYPE="disk" ROTA="1" MOUNTPOINT="/storage" PKNAME=""
+NAME="sdb" SIZE="298G" TYPE="disk" ROTA="0" MOUNTPOINT="" PKNAME=""
+NAME="sdb1" SIZE="512M" TYPE="part" ROTA="0" MOUNTPOINT="/boot/efi" PKNAME="sdb"
+NAME="sdb2" SIZE="290G" TYPE="part" ROTA="0" MOUNTPOINT="/" PKNAME="sdb"
+NAME="sdb3" SIZE="8G" TYPE="part" ROTA="0" MOUNTPOINT="[SWAP]" PKNAME="sdb"
+NAME="nvme0n1" SIZE="1.8T" TYPE="disk" ROTA="0" MOUNTPOINT="" PKNAME=""
+NAME="nvme0n1p1" SIZE="1.8T" TYPE="part" ROTA="0" MOUNTPOINT="" PKNAME="nvme0n1"
+NAME="vg-data" SIZE="1.8T" TYPE="lvm" ROTA="0" MOUNTPOINT="/data" PKNAME="nvme0n1p1"
+NAME="loop0" SIZE="4K" TYPE="loop" ROTA="0" MOUNTPOINT="/snap/x" PKNAME=""
+### sudo
+nopasswd
+### sshd
+passwordauthentication no
+permitrootlogin no
+### docker
+29.7.2
+### docker_runtimes
+io.containerd.runc.v2 nvidia runc 
+### nvidia
+0, NVIDIA GeForce RTX 3050, 8192 MiB, 94.07.71.00.6E, 8.6, 130.00 W, 130.00 W, 610.57.04
+1, NVIDIA GeForce RTX 4090, 49140 MiB, 95.02.3C.40.6A, 8.9, 200.00 W, 450.00 W, 610.57.04
+### pci_gpu
+0000:01:00.0 0x10de 0x2684 0x030000
+0000:05:00.0 0x10de 0x2507 0x030000
+### end

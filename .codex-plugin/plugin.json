@@ -1,0 +1,40 @@
+{
+  "name": "server-discovery",
+  "version": "0.1.0",
+  "description": "Read-only discovery for a fleet harness repository: a POSIX probe sent over ssh collects OS, kernel, CPU, RAM, disks, Docker, NVIDIA and Intel Arc GPUs, addresses, ports, tunnels and DNAT rules; discover.py turns it into the host card after comparing it with the card, render_index.py validates every card and regenerates the host index and an optional self-contained network map.",
+  "author": {
+    "name": "Pavel Rykov",
+    "email": "paul@drteam.rocks",
+    "url": "https://t.me/evilfreelancer"
+  },
+  "homepage": "https://github.com/EvilFreelancer/server-discovery",
+  "repository": "https://github.com/EvilFreelancer/server-discovery",
+  "license": "MIT",
+  "keywords": [
+    "devops",
+    "infrastructure-as-code",
+    "server-inventory",
+    "discovery",
+    "ssh",
+    "frontmatter",
+    "host-card",
+    "network-map",
+    "mermaid",
+    "topology",
+    "nvidia",
+    "intel-arc",
+    "docker",
+    "debian",
+    "ubuntu",
+    "openwrt",
+    "synology"
+  ],
+  "skills": "./",
+  "interface": {
+    "displayName": "server-discovery",
+    "shortDescription": "Discover hosts read-only over ssh, refresh their frontmatter cards, validate the fleet and regenerate its index and network map.",
+    "developerName": "Pavel Rykov",
+    "category": "Developer Tools",
+    "websiteURL": "https://github.com/EvilFreelancer/server-discovery"
+  }
+}
