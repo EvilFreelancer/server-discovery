@@ -57,6 +57,22 @@ not written.
 
 ## Install
 
+The skill is distributed through the [rpa-skills](https://github.com/EvilFreelancer/rpa-skills)
+catalog together with the other fleet skills.
+
+**Claude Code**: add the catalog once, then install the set from it:
+
+```text
+/plugin marketplace add EvilFreelancer/rpa-skills
+/plugin install server-discovery@rpa-skills
+/plugin install server-onboarding@rpa-skills
+/plugin install server-healthcheck@rpa-skills
+```
+
+**Codex**: `codex plugin marketplace add EvilFreelancer/rpa-skills`, then install from `/plugins`.
+
+**Coddy**: the catalog is built in, `coddy skills sync` installs and updates the whole set.
+
 Inside a harness repository, as a git submodule next to the other fleet skills:
 
 ```bash
