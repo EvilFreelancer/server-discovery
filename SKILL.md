@@ -12,7 +12,7 @@ description: >
   it touches the card, the generated index and, when the network probe proves a
   change, the ports table and the Topology.
 metadata:
-  version: 0.1.0
+  version: 0.1.1
   author: Pavel Rykov <paul@drteam.rocks>
   homepage: https://github.com/EvilFreelancer/server-discovery
   triggers: >

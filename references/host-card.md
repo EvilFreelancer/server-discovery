@@ -88,11 +88,11 @@ Hardware
 | `ram` | yes | total memory (`125 GiB`, `249 MiB`), `null` if unknown |
 | `gpus` | yes | list, one object per GPU: NVIDIA in `nvidia-smi` index order, then Intel in PCI order; `[]` when none is driven |
 | `gpus[].model` | yes | `nvidia-smi --query-gpu=name`; Intel: `Intel` plus the bracketed `lspci` name (`Intel Arc A770`) |
-| `gpus[].memory` | yes | `memory.total` as reported, in MiB; Intel: the local memory `total` from debugfs (needs root) |
+| `gpus[].memory` | yes | `memory.total` as reported, in MiB; Intel: the local memory `total` from debugfs (needs root), `i915_gem_objects` under i915, `tile0/vram_mm` (`vram0_mm` on older kernels) under xe |
 | `gpus[].vbios` | yes | `vbios_version`; `null` on Intel, the driver does not report it |
 | `gpus[].compute_cap` | yes | `compute_cap`, quoted so `12.0` survives YAML; Intel: the graphics IP version (`'12.55'` for DG2); `null` when the driver cannot report it |
-| `gpus[].power_limit` | yes | `power.limit`, the cap currently applied, in W; Intel: hwmon `power1_max` |
-| `gpus[].power_max` | yes | `power.max_limit`, the board maximum, in W; Intel: hwmon `power1_rated_max`, `null` when it reads 0 |
+| `gpus[].power_limit` | yes | `power.limit`, the cap currently applied, in W; Intel: hwmon `power1_max`, under xe `power2_max` (the package channel) when the card has no `power1` channel (DG2) |
+| `gpus[].power_max` | yes | `power.max_limit`, the board maximum, in W; Intel: hwmon `rated_max` of the same channel, `null` when it reads 0 or is absent |
 | `disks` | yes | list, one object per physical disk from `lsblk -d`, `[]` if unknown |
 | `disks[].device` | yes | kernel name (`sda`, `nvme0n1`) |
 | `disks[].size` | yes | `lsblk` `SIZE` string (`3.6T`, `298G`) |

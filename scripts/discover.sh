@@ -59,13 +59,22 @@ fi
 section intel
 # Discrete Intel GPUs (Arc, Battlemage): an Intel DRM card that has a hwmon (integrated
 # graphics has none). One line per card in PCI order. VRAM, IP version and GuC come from
-# debugfs, which needs root; without it those fields stay empty.
+# debugfs, which needs root; without it those fields stay empty. i915 and xe keep every
+# field in a different place, so each one is read per driver:
+#   i915  graphics version in i915_capabilities, VRAM total in i915_gem_objects, GuC as
+#         "version: found X", the cap in hwmon power1_max and power1_rated_max;
+#   xe    graphics_verx100 in info, VRAM total per tile in tile0/vram_mm (vram0_mm on
+#         older kernels), GuC as "found release version X"; hwmon channel 1 is the card
+#         and channel 2 the package, so the cap is power1_* where the card channel exists
+#         (Battlemage) and power2_* where only the package one does (DG2).
+# DISCOVER_SYSFS points this section at a copy of /sys, for the tests.
+SYSFS=${DISCOVER_SYSFS:-/sys}
 rootcat() {
-  if [ "$(id -u 2>/dev/null)" = 0 ]; then cat "$1" 2>/dev/null
+  if [ -r "$1" ]; then cat "$1" 2>/dev/null
   elif have sudo && sudo -n true 2>/dev/null; then sudo -n cat "$1" 2>/dev/null
   fi
 }
-for card in /sys/class/drm/card[0-9] /sys/class/drm/card[0-9][0-9]; do
+for card in "$SYSFS"/class/drm/card[0-9] "$SYSFS"/class/drm/card[0-9][0-9]; do
   [ -e "$card/device/vendor" ] || continue
   [ "$(cat "$card/device/vendor" 2>/dev/null)" = 0x8086 ] || continue
   hw=$(ls -d "$card"/device/hwmon/hwmon* 2>/dev/null | head -n 1)
@@ -73,14 +82,24 @@ for card in /sys/class/drm/card[0-9] /sys/class/drm/card[0-9][0-9]; do
   slot=$(basename "$(readlink -f "$card/device")")
   drv=$(basename "$(readlink -f "$card/device/driver")")
   name=$(have lspci && lspci -mm -s "$slot" 2>/dev/null | awk -F'"' '{print $6}')
-  dbg=/sys/kernel/debug/dri/$slot
-  gfx=$(rootcat "$dbg/i915_capabilities" | sed -n 's/^graphics version: //p' | head -n 1)
-  [ -n "$gfx" ] || gfx=$(rootcat "$dbg/info" | sed -n 's/^graphics_verx100:* *\([0-9]*\)$/\1/p' | head -n 1)
-  vram=$( { rootcat "$dbg/i915_gem_objects"; rootcat "$dbg/vram0_mm"; } | sed -n 's/.*total: *\([0-9]*MiB\).*/\1/p' | head -n 1)
-  guc=$(rootcat "$dbg/gt0/uc/guc_info" | sed -n 's/^[[:space:]]*version: found //p' | head -n 1)
+  dbg=$SYSFS/kernel/debug/dri/$slot
+  case "$drv" in
+    xe)
+      gfx=$(rootcat "$dbg/info" | sed -n 's/^graphics_verx100:* *\([0-9]*\)$/\1/p' | head -n 1)
+      vram=$( { rootcat "$dbg/tile0/vram_mm"; rootcat "$dbg/vram0_mm"; } | sed -n 's/.*total: *\([0-9]*MiB\).*/\1/p' | head -n 1)
+      guc=$(rootcat "$dbg/gt0/uc/guc_info" | sed -n 's/^[[:space:]]*found release version //p' | head -n 1)
+      if [ -e "$hw/power1_max" ]; then pw=power1; else pw=power2; fi
+      ;;
+    *)
+      gfx=$(rootcat "$dbg/i915_capabilities" | sed -n 's/^graphics version: //p' | head -n 1)
+      vram=$(rootcat "$dbg/i915_gem_objects" | sed -n 's/.*total: *\([0-9]*MiB\).*/\1/p' | head -n 1)
+      guc=$(rootcat "$dbg/gt0/uc/guc_info" | sed -n 's/^[[:space:]]*version: found //p' | head -n 1)
+      pw=power1
+      ;;
+  esac
   printf 'slot=%s|driver=%s|name=%s|vram=%s|gfx=%s|guc=%s|power_max_uw=%s|power_rated_uw=%s\n' \
     "$slot" "$drv" "$name" "$vram" "$gfx" "$guc" \
-    "$(cat "$hw/power1_max" 2>/dev/null)" "$(cat "$hw/power1_rated_max" 2>/dev/null)"
+    "$(cat "$hw/${pw}_max" 2>/dev/null)" "$(cat "$hw/${pw}_rated_max" 2>/dev/null)"
 done
 # NVIDIA display controllers straight from sysfs, so a box without pciutils or without the
 # driver still shows its GPUs: address, vendor, device, class.
